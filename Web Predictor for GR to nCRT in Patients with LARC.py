@@ -93,7 +93,8 @@ if st.sidebar.button('Predict'):
 
         # Display prediction result
         st.subheader('Predicted probability of GR to nCRT')
-        st.write(f'Predicted probability: {prediction:.8f}')  # 8 decimal places
+        st.markdown(f'<span style="color:red;">Predicted probability: {prediction:.8f}</span>', unsafe_allow_html=True)
+
 
         # Compute SHAP values
         explainer = shap.TreeExplainer(model_xgb)
@@ -117,6 +118,7 @@ if st.sidebar.button('Predict'):
 
     except Exception as e:
         st.error(f"An error occurred: {str(e)}")
+
 
 
 
