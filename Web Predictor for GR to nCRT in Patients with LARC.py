@@ -6,8 +6,10 @@ import shap
 import xgboost as xgb
 import matplotlib.pyplot as plt
 
+# 1. Load model
 model_xgb = joblib.load('XGBoost.pkl')
 
+# 2. Configure SHAP explainer
 feature_label = [
     'IC_DL_4', 
     'Zeff_wavelet-LLL_glszm_LongRunLowGrayLevelEmphasis', 
@@ -28,6 +30,7 @@ feature_label = [
     'CT-T stage'
 ]
 
+# Default values for continuous features and categorical (last two are categorical)
 default_values = [
     0.95656610, 1.77532916, 3.24643647, -0.06170008, 0.62616521,
     2.34962238, 1.72969082, 1.46654855, 1.65198977, 0.68470378,
@@ -36,9 +39,11 @@ default_values = [
     'T4'     # CT-T stage default
 ]
 
+# 3. Streamlit input
 st.title('Web Predictor for GR to nCRT in Patients with LARC')
 st.sidebar.header('Input Features')
 
+# Input feature form
 inputs = {}
 for i, feature in enumerate(feature_label):
     default_val = default_values[i]
@@ -69,25 +74,32 @@ for i, feature in enumerate(feature_label):
             format="%.8f"  # Show 8 decimals
         )
 
+# Map categorical variables to numerical values
 diff_map = {'Well/Moderate': 0, 'Poor': 1}
 ctt_map = {'T3': 0, 'T4': 1}
 
 inputs['Differentiation'] = diff_map[inputs['Differentiation']]
 inputs['CT-T stage'] = ctt_map[inputs['CT-T stage']]
 
+# Convert input values into a Pandas DataFrame
 input_df = pd.DataFrame([inputs])
+
+# 4. Prediction button
 if st.sidebar.button('Predict'):
     try:
         # Ensure correct input data
         input_data = xgb.DMatrix(input_df)  # Pass DataFrame format data directly without .values
         prediction = model_xgb.predict(input_data)[0]  # Make prediction
 
+        # Display prediction result
         st.subheader('Predicted probability of GR to nCRT')
         st.write(f'Predicted probability: {prediction:.8f}')  # 8 decimal places
 
+        # Compute SHAP values
         explainer = shap.TreeExplainer(model_xgb)
         shap_values = explainer.shap_values(input_df)
 
+        # 5. Display SHAP force plot
         st.subheader('SHAP Force Plot')
         shap.initjs()
         force_plot = shap.force_plot(
@@ -105,4 +117,3 @@ if st.sidebar.button('Predict'):
 
     except Exception as e:
         st.error(f"An error occurred: {str(e)}")
-
