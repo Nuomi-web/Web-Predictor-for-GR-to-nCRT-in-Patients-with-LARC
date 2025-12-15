@@ -93,7 +93,11 @@ if st.sidebar.button('Predict'):
 
         # Display prediction result
         st.subheader('Predicted probability of GR to nCRT')
-        st.markdown(f'<span style="color:red;">Predicted probability: {prediction:.8f}</span>', unsafe_allow_html=True)
+        st.markdown(
+    f'<span style="color:red; font-size:20px;">Predicted probability: {prediction:.8f}</span>',
+    unsafe_allow_html=True
+)
+
 
 
         # Compute SHAP values
@@ -118,6 +122,7 @@ if st.sidebar.button('Predict'):
 
     except Exception as e:
         st.error(f"An error occurred: {str(e)}")
+
 
 
 
