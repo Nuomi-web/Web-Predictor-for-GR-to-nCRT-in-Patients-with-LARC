@@ -31,7 +31,7 @@ feature_label = [
 ]
 
 # 3. Streamlit input
-st.title('Web Predictor for Post-CAS NIILs')
+st.title('Web Predictor for GR to nCRT in Patients with LARC')
 st.sidebar.header('Input Features')
 
 # Input feature form
@@ -102,4 +102,5 @@ if st.sidebar.button('Predict'):
 
     except Exception as e:
         st.error(f"An error occurred: {str(e)}")
+
 
