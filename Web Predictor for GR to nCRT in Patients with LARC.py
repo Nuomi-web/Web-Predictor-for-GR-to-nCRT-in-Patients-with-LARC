@@ -30,33 +30,48 @@ feature_label = [
     'CT-T stage'
 ]
 
+# Default values for continuous features and categorical (last two are categorical)
+default_values = [
+    0.95656610, 1.77532916, 3.24643647, -0.06170008, 0.62616521,
+    2.34962238, 1.72969082, 1.46654855, 1.65198977, 0.68470378,
+    3.45412184, 1.92712107, 12.20979126, 7.41223900, 4.89298639,
+    'Poor',  # Differentiation default
+    'T4'     # CT-T stage default
+]
+
 # 3. Streamlit input
 st.title('Web Predictor for GR to nCRT in Patients with LARC')
 st.sidebar.header('Input Features')
 
 # Input feature form
 inputs = {}
-for feature in feature_label:
+for i, feature in enumerate(feature_label):
+    default_val = default_values[i]
     if feature == 'Differentiation':
-        # Categorical: Well/Moderate or Poor
+        # Categorical: Well/Moderate or Poor, set default accordingly
+        options = ['Well/Moderate', 'Poor']
+        default_index = options.index(default_val) if default_val in options else 0
         inputs[feature] = st.sidebar.radio(
             feature, 
-            options=['Well/Moderate', 'Poor'], 
-            index=0
+            options=options, 
+            index=default_index
         )
     elif feature == 'CT-T stage':
-        # Categorical: T3 or T4
+        # Categorical: T3 or T4, set default accordingly
+        options = ['T3', 'T4']
+        default_index = options.index(default_val) if default_val in options else 0
         inputs[feature] = st.sidebar.radio(
             feature,
-            options=['T3', 'T4'],
-            index=0
+            options=options,
+            index=default_index
         )
     else:
         inputs[feature] = st.sidebar.number_input(
             feature, 
             min_value=-10.0, 
-            max_value=10.0, 
-            value=0.0
+            max_value=20.0,  # Increased max for safety since 12.2 appears
+            value=round(float(default_val),8), 
+            format="%.8f"  # Show 8 decimals
         )
 
 # Map categorical variables to numerical values
@@ -78,7 +93,7 @@ if st.sidebar.button('Predict'):
 
         # Display prediction result
         st.subheader('Predicted probability of GR to nCRT')
-        st.write(f'Predicted probability: {prediction}')
+        st.write(f'Predicted probability: {prediction:.8f}')  # 8 decimal places
 
         # Compute SHAP values
         explainer = shap.TreeExplainer(model_xgb)
@@ -102,5 +117,3 @@ if st.sidebar.button('Predict'):
 
     except Exception as e:
         st.error(f"An error occurred: {str(e)}")
-
-
