@@ -7,7 +7,7 @@ import xgboost as xgb
 import matplotlib.pyplot as plt
 
 # 1. Load model
-model_xgb = joblib.load('xgb.pkl')
+model_xgb = joblib.load('XGBoost.pkl')
 
 # 2. Configure SHAP explainer
 feature_label = [
@@ -117,4 +117,5 @@ if st.sidebar.button('Predict'):
 
     except Exception as e:
         st.error(f"An error occurred: {str(e)}")
+
 
