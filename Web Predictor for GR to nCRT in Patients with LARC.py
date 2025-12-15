@@ -110,12 +110,13 @@ if st.sidebar.button('Predict'):
             matplotlib=True, 
             contribution_threshold=0.1
         )
-        plt.savefig("shap_force_plot.png", bbox_inches='tight', dpi=1200)
+        plt.savefig("shap_force_plot.png", bbox_inches='tight', dpi=120)
         plt.close()
 
         st.image("shap_force_plot.png")
 
     except Exception as e:
         st.error(f"An error occurred: {str(e)}")
+
 
 
